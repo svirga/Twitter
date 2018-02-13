@@ -11,9 +11,23 @@ import Foundation
 class User {
     
     var name: String
+    var screenName: String
+    static var current: User?
     
-    init(dictionary: [String: Any]) {
+    
+    var userURL: URL?
+    
+    init(dictionary: [String: Any])
+    {
         name = dictionary["name"] as! String
+        screenName = (dictionary["screen_name"] as? String)!
+        
+        
+        let urlString = dictionary["profile_image_url_https"] as? String
+        if let urlString = urlString
+        {
+            userURL = URL(string: urlString)
+        }
 
     }
 }

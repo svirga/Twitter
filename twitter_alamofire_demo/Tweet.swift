@@ -8,7 +8,8 @@
 
 import Foundation
 
-class Tweet {
+class Tweet
+{
     
     // MARK: Properties
     var id: Int64 // For favoriting, retweeting & replying
@@ -20,8 +21,24 @@ class Tweet {
     var user: User // Contains name, screenname, etc. of tweet author
     var createdAtString: String // Display date
     
+    var retweetedByUser: User?
+    
     // MARK: - Create initializer with dictionary
-    init(dictionary: [String: Any]) {
+    init(dictionary: [String: Any])
+    {
+        var dictionary = dictionary
+        
+        // Is this a re-tweet?
+        if let originalTweet = dictionary["retweeted_status"] as? [String: Any]
+        {
+            let userDictionary = dictionary["user"] as! [String: Any]
+            self.retweetedByUser = User(dictionary: userDictionary)
+            
+            // Change tweet to original tweet
+            dictionary = originalTweet
+        }
+        
+        
         id = dictionary["id"] as! Int64
         text = dictionary["text"] as! String
         favoriteCount = dictionary["favorite_count"] as? Int
@@ -43,8 +60,23 @@ class Tweet {
         formatter.timeStyle = .none
         // Convert Date to String
         createdAtString = formatter.string(from: date)
-        
-        
     }
+    
+    static func tweets(with array: [[String: Any]]) -> [Tweet] {
+        var tweets: [Tweet] = []
+        for tweetDictionary in array {
+            let tweet = Tweet(dictionary: tweetDictionary)
+            tweets.append(tweet)
+        }
+        return tweets
+    }
+    
+    
+    
 }
+
+
+
+
+
 
